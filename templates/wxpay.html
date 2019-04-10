@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script>
+    function onBridgeReady(data){
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest', {
+                "appId": data.appId,     //公众号名称，由商户传入
+                "timeStamp": data.timeStamp,         //时间戳，自1970年以来的秒数
+                "nonceStr": data.nonceStr, //随机串
+                "package": data.package, //订单id,这是微信下单微信生成的订单id不是你自己的
+                "signType":"MD5",         //微信签名方式：
+                "paySign": data.paySign //微信签名
+            }, function(res){
+                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                    # 支付成功的跳转页面，我这里跳到了首页
+                    window.location.href = '/';
+                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+            });
+    }
+    # 点击支付的响应函数，调起下单请求，并返回支付需要上传的数据（都在data里）
+    $('#wechatPay').click(function(){
+        var order = $(this).data('parm');
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+        });
+        $.ajax({
+            type: 'POST',
+            url: '/wechatPay',
+            data: {
+                'order': order
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (typeof WeixinJSBridge == "undefined"){
+                    if( document.addEventListener ){
+                        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    }else if (document.attachEvent){
+                        document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                }else{
+                    onBridgeReady(data);
+                }
+            },
+            error: function () {
+            }
+        });
+    });
+</script>
+</body>
+</html>

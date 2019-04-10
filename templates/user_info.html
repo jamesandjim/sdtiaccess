@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    个人信息展示
+{% endblock title %}
+{% block main %}
+    <form action="{% url 'checkin' %}" method="post">
+        <div class="weui_media_hd"><img src="{{ headimgurl }}" style="width:50%;display:block;margin:auto;"></div>
+
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>用户唯一号码</p>
+            </div>
+            <div class="weui_cell_ft">{{ openid }}</div>
+        </div>
+
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>昵称</p>
+            </div>
+            <div class="weui_cell_ft">{{ nickname }}</div>
+        </div>
+
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>性别</p>
+            </div>
+            <div class="weui_cell_ft">
+                {% if sex == 1 %}
+                    男
+                {% elif sex == 2 %}
+                    女
+                {% else %}
+                    未知
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>城市</p>
+            </div>
+            <div class="weui_cell_ft">{{ country }} {{ province }} {{ city }}</div>
+        </div>
+
+
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>进入时间</p>
+            </div>
+            <div class="weui_cell_ft">{{ begin_time }}</div>
+        </div>
+
+
+        <div class="button_sp_area">
+            <input type="submit" class="weui_btn weui_btn_primary" value="开门">
+        </div>
+        {% csrf_token %}
+    </form>
+
+
+{% endblock main %}

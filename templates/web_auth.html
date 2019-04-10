@@ -1,0 +1,22 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+    申请获取微信个人信息
+{% endblock title %}
+{% block main %}
+<div class="weui_msg">
+    <div class="weui_icon_area"><i class="weui_icon_safe weui_icon_safe_success"></i></div>
+    <div class="weui_text_area">
+        <h2 class="weui_msg_title">服务说明</h2>
+        <p class="weui_msg_desc">请认真阅读以下说明，如果确认无误，请点“同意授权”，即可以接受我们的服务</p>
+    </div>
+</div>
+<form action="{% url 'web_auth' %}" method="post">
+    <input type=hidden name="flag" value="1">
+    <div class="button_sp_area">
+        <input type="submit" class="weui_btn weui_btn_primary" value="同意授权">
+    </div>
+    {% csrf_token %}
+</form>  
+{% endblock main %}
