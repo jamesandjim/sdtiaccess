@@ -1,0 +1,7 @@
+<uwsgi>
+<socket>:8010</socket>
+<chdir>/var/www/sdtiaccess</chdir>
+<module>sdtiaccess.wsgi</module>
+<processes>4</processes>
+<daemonize>uwsgi.log</daemonize>
+</uwsgi>
