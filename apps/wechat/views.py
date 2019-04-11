@@ -1,30 +1,62 @@
-from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.backends import ModelBackend
-# from django.core import serializers
 import json
-import requests
-import base64
-import random
 import time
-from datetime import datetime, date
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseServerError
-from django.shortcuts import render, redirect
+import hashlib
 
-
+from django.shortcuts import render, redirect, reverse
 import django.utils.timezone as timezone
 from django.views.generic import View
-from django.http import HttpResponseRedirect
 from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import render, redirect
 
+from wechat.wechatConfig import TOKEN
 from wechat.wechatAPI import WechatLogin
 from .models import Xf_list, Dev_token
 from .wechatAPI import WechatLogin, WechatTemplates, WechatOrder, WechatPayAPI
 
+
+def index(request):
+    """
+    微信简单通信，
+    GET用于验证签名信息，
+    加密/校验流程如下：
+    1. 将token、timestamp、nonce三个参数进行字典序排序
+    2. 将三个参数字符串拼接成一个字符串进行sha1加密
+    3. 开发者获得加密后的字符串可与signature对比，标识该请求来源于微信
+    POST实现一个简单的回复信息
+    """
+    if request.method == "GET":
+        signature = request.GET.get("signature", None)
+        timestamp = request.GET.get("timestamp", None)
+        nonce = request.GET.get("nonce", None)
+        echostr = request.GET.get("echostr", None)
+        tmp_list = [TOKEN, timestamp, nonce]
+        tmp_list.sort()
+        tmp_str = "%s%s%s" % tuple(tmp_list)
+        tmp_str = hashlib.sha1(tmp_str).hexdigest()
+        if tmp_str == signature:
+            return HttpResponse(echostr)
+        else:
+            return HttpResponse("weixin  index")
+
+    if request.method == 'POST':
+        data = request.data
+        toUserName = data.get('ToUserName', '')
+        fromUserName = data.get('FromUserName', '')
+        msgType = data.get('MsgType', '')
+
+        content = 'http://' + request.get_host() + reverse('auth')  # 作为测试，用户发送任何内容，都返回请求授权的地址
+        return render(request, 'reply.xml',
+                      {'toUserName': fromUserName,
+                       'fromUserName': toUserName,
+                       'createTime': int(time.time()),   # 格式规定time是int类型
+                       'msgType': msgType,
+                       'content': content,
+                       },
+                      )
+
 def home(request):
     return HttpResponse('这是首页')
+
 
 class WechatViewSet(View):
     wechat_api = WechatLogin()

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# ----------------------------------------------
-# @Time    : 18-3-21 下午1:36
-# @Author  : YYJ
-# @File    : WechatAPI.py
-# @CopyRight: ZDWL
-# ----------------------------------------------
 import hashlib
 import random
 import time
@@ -174,36 +167,6 @@ class WechatTemplates(WechatAPI):
             self.mp_expires_in = token_data['expires_in']
             return self.mp_access_token, self.mp_expires_in, True
 
-    # 以下功能暂不使用
-    # def change_industry(self):
-    #     """设置所属行业，每月可修改行业1次"""
-    #     url = self.config.defaults.get('change_industry') + (
-    #         '?access_token=%s' % self.mp_access_token)
-    #     prams = {
-    #         "industry_id1": "23",
-    #         "industry_id2": "31"
-    #     }
-    #     data = requests.post(url, prams)
-    #
-    # def get_industry(self):
-    #     """获取行业信息"""
-    #     if self.mp_access_token is None:
-    #         _, msg, success = self.get_mp_access_token()
-    #         if not success:
-    #             return msg, False
-    #     url = self.config.defaults.get('get_industry') + (
-    #         '?access_token=%s' % self.mp_access_token)
-    #     industry_data = requests.get(url)
-    #     if 'primary_industry' in industry_data:
-    #         primary_industry = industry_data['primary_industry']
-    #         secondary_industry = industry_data['secondary_industry']
-    #         return primary_industry, secondary_industry, True
-    #     else:
-    #         return '', '获取行业信息错误', False
-    #
-    # def get_templates_id(self):
-    #     pass
-    #
 
     def send_templates_message(self, touser, template_id, data, url=None, miniprogram=None):
         post_data = {
